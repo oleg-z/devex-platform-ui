@@ -1,0 +1,78 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.log
+
+# Build artifacts
+dist/
+build/
+.cache/
+.eslintcache
+.nyc_output/
+coverage/
+.vscode/
+
+# Dependency directories
+jspm_packages/
+bower_components/
+
+# IDE / Editor files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Test coverage
+coverage/
+lcov-report/
+
+# MacOS / Linux system files
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# Firebase
+.firebase/
+
+# Storybook
+.storybook/
+storybook-static/
+
+# Cypress testing
+cypress/screenshots/
+cypress/videos/
+
+# Husky hooks
+.husky/_
+
+# VSCode settings
+.vscode/*
+
+# Ignore npm package-lock if using yarn/pnpm
+# Uncomment if necessary
+# package-lock.json
+
