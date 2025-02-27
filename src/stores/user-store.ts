@@ -18,9 +18,7 @@ export const useUserStore = defineStore("user", {
           { headers: { Authorization: `Bearer ${this.token}` } }
         );
         this.user = response.data;
-        console.log("User data fetched successfully");
       } catch (error) {
-        console.error("Error fetching user data", error);
       }
     },
 

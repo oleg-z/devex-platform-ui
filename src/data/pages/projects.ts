@@ -13,7 +13,7 @@ export type Sorting = {
 }
 
 export const getProjects = async (options: Partial<Sorting> & Pagination) => {
-  const projects: Project[] = await ProjectService.list()
+  const projects: Project[] = await ProjectService.getAll()
 
   return {
     data: projects,
@@ -27,7 +27,6 @@ export const getProjects = async (options: Partial<Sorting> & Pagination) => {
 
 export const addProject = async (project: Omit<Project, 'id' | 'created_at'>) => {
   var response = await ProjectService.create(project)
-  console.log(response)
   return
 }
 

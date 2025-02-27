@@ -71,11 +71,6 @@ withDefaults(
             icon: 'mso-settings',
           },
           {
-            name: 'billing',
-            to: 'billing',
-            icon: 'mso-receipt_long',
-          },
-          {
             name: 'projects',
             to: 'projects',
             icon: 'mso-favorite',

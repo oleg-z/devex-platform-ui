@@ -16,7 +16,6 @@ export default {
     const logout = () => {
       localStorage.removeItem("authToken");
       localStorage.removeItem("userId");
-      console.log("User logged out. Token removed.");
       router.push('/auth/login'); // Redirect to login page
     };
 

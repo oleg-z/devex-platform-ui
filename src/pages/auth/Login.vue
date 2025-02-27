@@ -65,7 +65,6 @@ const submit = async () => {
       userStore.fetchUser(); // Fetch user on page load
       push("/dashboard");
     } catch (error) {
-      console.log(error)
       init({ message: error.response.data.message, color: 'danger' })
     }
   }

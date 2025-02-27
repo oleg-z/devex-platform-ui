@@ -1,69 +1,30 @@
-import axios from "axios";
-import { UUIDTypes } from "uuid";
+import CRUDApiService from "./CRUDApiService";
 
-const API_URL = "/api/projects/";
+const PROJECTS_ENDPOINT = "/api/projects/";
 
 const ProjectService = {
-  /**
-   * Fetch all projects
-   * @returns {Promise}
-   */
-  list(): Promise<any> {
-    return axios.get(API_URL, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
-    }).then((r) => r.data);;
+  getAll() {
+    return CRUDApiService.getAll(PROJECTS_ENDPOINT);
   },
 
-  /**
-   * Fetch a single project by ID
-   * @param {string} projectId
-   * @returns {Promise}
-   */
-  get(projectId: UUIDTypes): Promise<any> {
-    return axios.get(`${API_URL}${projectId}/`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("authToken")}` }
-    }).then((r) => r.data);
+  getById(projectId: string) {
+    return CRUDApiService.getById(PROJECTS_ENDPOINT, projectId);
   },
 
-  /**
-   * Create a new project
-   * @param {Object} projectData
-   * @returns {Promise}
-   */
-  create(projectData: object): Promise<any> {
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem("authToken")}`
-    };
-    return axios.post(API_URL, projectData, { headers: headers }).then((r) => r.data);
+  create(projectData: object) {
+    return CRUDApiService.create(PROJECTS_ENDPOINT, projectData);
   },
 
-  /**
-   * Update an existing project
-   * @param {string} projectId
-   * @param {Object} projectData
-   * @returns {Promise}
-   */
-  update(projectId: UUIDTypes, projectData: object): Promise<any> {
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem("authToken")}`
-    };
-
-    return axios.put(`${API_URL}${projectId}/`, projectData, { headers: headers }).then((r) => r.data);
+  update(projectId: string, projectData: object) {
+    return CRUDApiService.update(PROJECTS_ENDPOINT, projectId, projectData);
   },
 
-  /**
-   * Delete a project by ID
-   * @param {string} projectId
-   * @returns {Promise}
-   */
-  delete(projectId: UUIDTypes): Promise<any> {
-    const headers = {
-      'Authorization': `Bearer ${localStorage.getItem("authToken")}`
-    };
+  // updateProjectStatus(projectId: string, status) {
+  //   return CRUDApiService.patch(PROJECTS_ENDPOINT, projectId, { status });
+  // },
 
-    return axios.delete(`${API_URL}${projectId}/`, { headers: headers });
+  delete(projectId: string) {
+    return CRUDApiService.delete(PROJECTS_ENDPOINT, projectId);
   }
 };
 

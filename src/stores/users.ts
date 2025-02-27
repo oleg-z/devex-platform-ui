@@ -31,9 +31,7 @@ export const useUsersStore = defineStore('users', {
           { headers: { Authorization: `Bearer ${userStore.token}` } }
         );
         responseData = response.data;
-        console.log("Users data fetched successfully");
       } catch (error) {
-        console.error("Error fetching users data", error);
         return;
       }
 
@@ -86,8 +84,6 @@ export const useUsersStore = defineStore('users', {
         if (index !== -1) {
           this.items.splice(index, 1);
         }
-
-        console.log(`User ${user.id} deleted successfully`);
       } catch (error) {
         console.error("Error deleting user", error);
       }

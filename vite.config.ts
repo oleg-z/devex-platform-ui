@@ -4,9 +4,15 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'url'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import { vuestic } from '@vuestic/compiler/vite'
+import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+    },
+  },
   build: {
     sourcemap: true,
   },
