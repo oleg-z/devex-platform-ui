@@ -2,10 +2,16 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import ApplicationService from "@/services/ApplicationService";
 import ConfigurationService from "@/services/ConfigurationService";
+import ConfigurationDetails from "@/pages/configurations/ConfigurationDetails.vue"
+import Deployments from "@/pages/deployments/Deployments.vue"
+
 import { VaCard, VaSidebar, VaSidebarItem, VaButton, VaInput, VaForm } from "vuestic-ui";
 
-
 export default {
+  components: {
+    ConfigurationDetails,
+    Deployments
+  },
   setup() {
     const route = useRoute();
     const applicationId = route.params.id;
@@ -45,16 +51,18 @@ export default {
 
     // configurations related code
     const isConfigModalOpen = ref(false);
-    const newConfig = ref({ name: "", definition: "config: {}", version: "" });
+    const newConfig = ref({ name: "", definition: "config: {}", version: "", application_id: applicationId });
     const configId = ref(String)
     const configurations = ref([]);
-    const configuration = ref({});
 
     const configurationSelected = (id) => {
       configId.value = id;
       selectedTab.value = 'configurations';
-      fetchConfiguration();
     };
+
+    const selectedConfiguration = () => {
+      return configId;
+    }
 
     const createConfiguration = async () => {
       if (!newConfig.value.name || !newConfig.value.version) {
@@ -73,31 +81,11 @@ export default {
 
     const fetchConfigurations = async () => {
       try {
-        configurations.value = await ConfigurationService.getAll();
+        configurations.value = await ConfigurationService.getApplicationConfigurations(applicationId);
       } catch (error) {
         console.error("Error fetching configurations:", error);
       }
     }
-
-    const fetchConfiguration = async () => {
-      try {
-        configuration.value = await ConfigurationService.getById(configId.value);
-        originalConfiguration.value = { ...configuration.value };
-      } catch (error) {
-        console.error("Error fetching configuration details:", error);
-      }
-    };
-
-    // Save edited definition
-    const saveDefinition = async () => {
-      try {
-        await ConfigurationService.update(configId.value, { ...configuration.value });
-        isEditing.value = false;
-        originalConfiguration.value = { ...configuration.value };
-      } catch (error) {
-        console.error("Error saving configuration definition:", error);
-      }
-    };
 
     // Cancel editing and restore original application details
     const cancelEdit = () => {
@@ -117,16 +105,13 @@ export default {
       editField,
       saveApplication,
       cancelEdit,
-
+      selectedConfiguration,
       configurationSelected,
       newConfig,
       configId,
-      configuration,
       configurations,
       isConfigModalOpen,
       createConfiguration,
-      fetchConfiguration,
-      saveDefinition
     };
   }
 };

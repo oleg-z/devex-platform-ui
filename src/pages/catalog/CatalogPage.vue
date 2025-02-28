@@ -12,13 +12,9 @@
     </va-card-content>
 
     <!-- Applications Table -->
-    <va-data-table
-      :items="filteredApplications"
-      :columns="columns"
-      class="mt-4"
-    >
+    <va-data-table :items="filteredApplications" :columns="columns" class="mt-4">
       <template #cell(name)="{ row }">
-        <RouterLink :to="`/catalog/applications/${row.rowData.id}`"  class="app-link">{{ row.rowData.name }}</RouterLink>
+        <RouterLink :to="`/catalog/applications/${row.rowData.id}`" class="app-link">{{ row.rowData.name }}</RouterLink>
       </template>
       <template #cell(actions)="{ row }">
         <va-button size="small" color="danger" @click="deleteApplication(row.rowData.id)">Delete</va-button>
@@ -26,7 +22,8 @@
     </va-data-table>
 
     <!-- New Application Modal -->
-    <va-modal v-model="isNewApplicationModalOpen" title="Create New Application" okText="Create" @ok="createApplication">
+    <va-modal v-model="isNewApplicationModalOpen" title="Create New Application" okText="Create"
+      @ok="createApplication">
       <va-input v-model="newApplication.name" placeholder="Application Name" class="mt-2" />
       <va-input v-model="newApplication.version" placeholder="Version" class="mt-2" />
     </va-modal>
@@ -131,7 +128,8 @@ export default {
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 8px; /* Adds spacing between input and button */
+  gap: 8px;
+  /* Adds spacing between input and button */
 }
 
 .search-input {

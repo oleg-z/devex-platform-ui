@@ -1,122 +1,117 @@
-
 <template>
-    <VaLayout>
-      <template #top>
-        <h2>{{ configuration.name }}</h2>
-      </template>
-
-      <template #left>
-        <VaSidebar>
-          <VaSidebarItem to="/configurations">
-            <VaSidebarItemContent>
-              <VaSidebarItemTitle>Back to Configurations</VaSidebarItemTitle>
-            </VaSidebarItemContent>
-          </VaSidebarItem>
-        </VaSidebar>
-      </template>
-
+  <VaCard class="application-details">
+    <VaCardContent>
       <!-- Main Content -->
-      <template #content>
-        <VaCard class="configuration-details">
-          <VaCardTitle>Configuration Overview</VaCardTitle>
-          <VaCardContent>
-            <VaForm>
-              <VaInput v-model="configuration.name" label="Name" readonly="" />
-              <VaInput v-model="configuration.version" label="Version" readonly="" />
-            </VaForm>
-          </VaCardContent>
-        </VaCard>
 
-        <VaCard class="configuration-details mt-4">
-          <VaCardTitle>Configuration Definition</VaCardTitle>
-          <VaCardContent>
-            <div v-if="isEditing" class="definition-editor">
-              <textarea v-model="configuration.definition" class="code-editor"></textarea>
-              <VaButton class="mt-2" color="primary" @click="saveDefinition">Save</VaButton>
-              <VaButton class="mt-2 ml-2" color="danger" @click="cancelEdit">Cancel</VaButton>
+      <VaCard class="configuration-details">
+        <VaCardTitle>
+          Configuration: {{ currentConfiguration.name }}, Version: {{ currentConfiguration.version }}
+        </VaCardTitle>
+        <VaCardContent>
+          <div v-if="isEditingConfig" class="definition-editor">
+            <textarea v-model="currentConfiguration.definition" class="code-editor" :autosize="true" :min-rows="10">
+            </textarea>
+            <div align="right">
+              <VaButton class=" mt-2" size="small" color="primary" @click="saveDefinition">Save</VaButton>
+              <VaButton class="mt-2 ml-2" size="small" color="danger" @click="cancelEdit">Cancel</VaButton>
             </div>
-            <pre v-else @click="isEditing = true" class="code-display">{{ configuration.definition || "No definition available" }}</pre>
-          </VaCardContent>
-        </VaCard>
-      </template>
-    </VaLayout>
-  </template>
+          </div>
+          <pre v-else @click="isEditingConfig = true"
+            class="code-display">{{ currentConfiguration.definition || "No definition available" }}</pre>
+        </VaCardContent>
+      </VaCard>
+    </VaCardContent>
+  </VaCard>
+</template>
 
-  <script>
-  import { ref, onMounted } from "vue";
-  import { useRoute } from "vue-router";
-  import ConfigurationService from "@/services/ConfigurationService";
-  import { VaCard, VaSidebar, VaSidebarItem, VaButton, VaInput, VaForm } from "vuestic-ui";
+<script>
+import { watch, computed, onMounted, ref } from 'vue';
+import ConfigurationService from "@/services/ConfigurationService";
+import { VaFormField } from 'vuestic-ui';
 
-  export default {
-    setup() {
-      const route = useRoute();
-      const configId = route.params.id;
-      const configuration = ref({});
-      const isEditing = ref(false);
-      const originalConfiguration = ref({});
+export default {
+  props: ['configuration', 'configId'],
+  setup(props) {
+    // Cancel editing and restore original application details
+    const isEditingConfig = ref(false);
+    const configurationId = ref(props.configId);
+    const currentConfiguration = ref({})
+    const originalConfiguration = ref({})
+    const reload = computed(() => fetchConfiguration(configurationId))
 
-      // Fetch specific configuration details
-      const fetchConfiguration = async () => {
-        try {
-          configuration.value = await ConfigurationService.getById(configId);
-          originalConfiguration.value = { ...configuration.value };
-        } catch (error) {
-          console.error("Error fetching configuration details:", error);
-        }
-      };
+    const fetchConfiguration = async (id) => {
+      try {
+        currentConfiguration.value = await ConfigurationService.getById(configurationId.value);
+        originalConfiguration.value = await ConfigurationService.getById(configurationId.value);
 
-      // Save edited definition
-      const saveDefinition = async () => {
-        try {
-          await ConfigurationService.update(configId, { ...configuration.value });
-          isEditing.value = false;
-          originalConfiguration.value = { ...configuration.value };
-        } catch (error) {
-          console.error("Error saving configuration definition:", error);
-        }
-      };
+      } catch (error) {
+        console.error("Error fetching configuration details:", error);
+      }
+    };
 
-      // Cancel editing and restore original configuration details
-      const cancelEdit = () => {
-        configuration.value = { ...originalConfiguration.value };
-        isEditing.value = false;
-      };
+    const cancelEdit = () => {
+      currentConfiguration.value = { ...originalConfiguration.value };
+      isEditingConfig.value = false;
+    };
 
-      onMounted(fetchConfiguration);
+    // Save edited definition
+    const saveDefinition = async () => {
+      try {
+        await ConfigurationService.update(configurationId.value, { ...currentConfiguration.value });
+        isEditingConfig.value = false;
+        originalConfiguration.value = { ...currentConfiguration.value };
+      } catch (error) {
+        console.error("Error saving configuration definition:", error);
+      }
+    };
 
-      return {
-        configuration,
-        isEditing,
-        saveDefinition,
-        cancelEdit
-      };
-    }
-  };
-  </script>
+    onMounted(fetchConfiguration);
+    watch(
+      configurationId,
+      fetchConfiguration
+    )
 
-  <style scoped>
-  .configuration-details {
-    height: 70vh;
+
+    return {
+      reload,
+      configurationId,
+      fetchConfiguration,
+      currentConfiguration,
+      isEditingConfig,
+      cancelEdit,
+      saveDefinition
+    };
   }
+}
+</script>
 
-  .code-display {
-    background-color: #2d2d2d;
-    color: #f8f8f2;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    white-space: pre-wrap;
-  }
+<style scoped>
+.application-details {
+  height: 70vh;
+}
 
-  .definition-editor textarea {
-    width: 100%;
-    height: 300px;
-    font-family: monospace;
-    background-color: #2d2d2d;
-    color: #f8f8f2;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-  }
-  </style>
+.code-display {
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: pre-wrap;
+}
+
+.definition-editor .code-editor {
+  width: 100%;
+  height: 300px;
+  font-family: monospace;
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.editable-field {
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+</style>

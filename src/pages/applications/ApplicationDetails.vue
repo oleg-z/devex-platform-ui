@@ -26,13 +26,14 @@
             </VaSidebarItemContent>
           </VaSidebarItem>
 
-          <VaSidebarItem @click="selectedTab = 'configurations'">
+          <VaSidebarItem @click="selectedTab = 'configurations'" active-color="backgroundPrimary">
             <VaSidebarItemContent class="py-3 pr-2 pl-4">
               <VaSidebarItemTitle class="flex justify-between items-center leading-5 font-semibold">
                 Configurations
               </VaSidebarItemTitle>
             </VaSidebarItemContent>
-            <VaSidebarItem v-for="config in configurations" :key="config.id" @click="configurationSelected(config.id)">
+            <VaSidebarItem v-for="config in configurations" :key="config.id" @click="configurationSelected(config.id)"
+              :active="selectedTab === 'configurations' && configId === config.id">
               <VaSidebarItemContent>
                 <VaSidebarItemTitle>{{ config.name }}</VaSidebarItemTitle>
               </VaSidebarItemContent>
@@ -97,43 +98,13 @@
       </div>
 
       <div v-if="selectedTab === 'configurations'">
-        <VaCard class="application-details">
-          <VaCardTitle>Configurations</VaCardTitle>
-          <VaCardContent>
-            <!-- Main Content -->
-
-            <VaCard class="configuration-details">
-              <VaCardTitle>Configuration Overview</VaCardTitle>
-              <VaCardContent>
-                <VaForm>
-                  <VaInput v-model="configuration.name" label="Name" readonly="" />
-                  <VaInput v-model="configuration.version" label="Version" readonly="" />
-                </VaForm>
-              </VaCardContent>
-            </VaCard>
-
-            <VaCard class="configuration-details mt-4">
-              <VaCardTitle>Configuration Definition</VaCardTitle>
-              <VaCardContent>
-                <div v-if="isEditing" class="definition-editor">
-                  <textarea v-model="configuration.definition" class="code-editor"></textarea>
-                  <VaButton class="mt-2" color="primary" @click="saveDefinition">Save</VaButton>
-                  <VaButton class="mt-2 ml-2" color="danger" @click="cancelEdit">Cancel</VaButton>
-                </div>
-                <pre v-else @click="isEditing = true"
-                  class="code-display">{{ configuration.definition || "No definition available" }}</pre>
-              </VaCardContent>
-            </VaCard>
-
-          </VaCardContent>
-        </VaCard>
+        <ConfigurationDetails :configId="selectedConfiguration()"> </ConfigurationDetails>
       </div>
 
       <div v-if="selectedTab === 'deployments'">
         <VaCard class="application-details">
-          <VaCardTitle>Application Deployments</VaCardTitle>
           <VaCardContent>
-
+            <Deployments />
           </VaCardContent>
         </VaCard>
       </div>

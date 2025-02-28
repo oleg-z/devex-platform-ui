@@ -1,17 +1,10 @@
 import CRUDApiService from "./CRUDApiService";
 
-const API_ENDPOINT = "/api/configurations";
+const API_ENDPOINT = "/api/deployments";
 
 const ConfigurationService = {
   getAll() {
     return CRUDApiService.getAll(API_ENDPOINT);
-  },
-
-  async getApplicationConfigurations(applicationId: string) {
-    const configurations = await CRUDApiService.getAll(API_ENDPOINT)
-    return Object.values(configurations).filter((item =>
-      String(item.application_id) === String(applicationId)
-    ));
   },
 
   getById(id: string) {
