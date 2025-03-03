@@ -34,13 +34,36 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import ApplicationService from "@/services/ApplicationService";
+import YAML from 'yaml'
 
 export default {
   setup() {
     const applications = ref([]);
     const filters = ref({ name: "" });
     const isNewApplicationModalOpen = ref(false);
-    const newApplication = ref({ name: "", version: "", definition: "{{spec template}}" });
+
+    const defaultDefinition = {
+      metadata: {
+        app_metadata1: "value1",
+        app_metadata2: "value2"
+      },
+      spec: [
+        {
+          name: "my-resource",
+          kind: "plugin/name",
+          metadata: {
+            resource_metadata1: "value1",
+            resource_metadata2: "value1",
+          },
+          properties: {
+            property1: "value1",
+            property2: "value2"
+          }
+        }
+      ]
+    }
+
+    const newApplication = ref({ name: "", version: "", definition: "" });
     const router = useRouter();
 
     // Fetch applications from the API
@@ -73,7 +96,7 @@ export default {
 
     // Open the "New Application" modal
     const openNewApplicationModal = () => {
-      newApplication.value = { name: "", version: "", definition: "{{spec template}}" };
+      newApplication.value = { name: "", version: "", definition: YAML.stringify(defaultDefinition) };
       isNewApplicationModalOpen.value = true;
     };
 
